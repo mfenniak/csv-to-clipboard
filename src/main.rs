@@ -1,13 +1,54 @@
-use std::error::Error;
-use std::fs::File;
+use std::{fs::File, time::Instant};
 use csv::StringRecord;
 use clipboard::{ClipboardProvider, ClipboardContext};
+use msgbox::IconType;
+use std::env;
+use anyhow::Result;
+use thiserror::Error;
 
-// FIXME: add argument for the file to download
 // FIXME: change to win32 API or something so that console doesn't appear when running through double-click... maybe MessageBoxA it ir something instead
+// FIXME: add context to all errors in copy_csv_to_clipboard
+// FIXME: micro-optimize speed?
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let mut rdr = csv::Reader::from_reader( File::open("test1.csv")?);
+#[derive(Error, Debug)]
+pub enum ApplicationError {
+    #[error("Required filename argument not provided")]
+    MissingFileArgument,
+    // #[error("Invalid header (expected {expected:?}, got {found:?})")]
+    // InvalidHeader {
+    //     expected: String,
+    //     found: String,
+    // },
+    // #[error("Missing attribute: {0}")]
+    // MissingAttribute(String),
+}
+
+fn main() -> Result<()> {
+    match copy_csv_to_clipboard() {
+        Ok(_) => {
+            Ok(())
+        },
+        Err(e) => {
+            msgbox::create("Error!", &format!("Error occurred in rust-clipboardy.exe: {}", e), IconType::Error)?;
+            Ok(()) // technically should be an error, but I don't think it really matters        
+        }
+    }
+}
+
+fn copy_csv_to_clipboard() -> Result<(), Box<dyn std::error::Error>> {
+    let start = Instant::now();
+
+    let args: Vec<String> = env::args().collect();
+    let cmd = args.get(0).expect("arg[0] required");
+    let file = args.get(1);
+
+    if file.is_none() {
+        return Err(Box::new(ApplicationError::MissingFileArgument));
+    }
+
+    let file = file.unwrap();
+
+    let mut rdr = csv::Reader::from_reader( File::open(file)?);
     let mut str = String::new();
 
     for result in rdr.records() {
@@ -16,11 +57,12 @@ fn main() -> Result<(), Box<dyn Error>> {
         str.push_str(&convert_to_tsv_line(record));
     }
 
-    println!("tsv: {}", str);
-
     let mut ctx: ClipboardContext = ClipboardProvider::new()?; // .expect("initializing ClipboardProvider");
     ctx.set_contents(str)?; // .expect("set_contents on ClipboardProvider");
 
+    let now = Instant::now();
+    let elapsed = now.duration_since(start);
+    msgbox::create("Success", &format!("Success {} {}; took {}ms", cmd, file, elapsed.as_millis()), IconType::Info)?;
 
     Ok(())
 }
@@ -46,9 +88,6 @@ fn convert_to_tsv_line(rec: StringRecord) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    // fixme: empty case
-    // fixme: stuff with \n and \t in it
 
     #[test]
     fn convert_to_tsv_line_simple() {
