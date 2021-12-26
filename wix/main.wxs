@@ -99,6 +99,51 @@
                                 DiskId='1'
                                 Source='target\$(var.Profile)\rust-clipboardy.exe'
                                 KeyPath='yes'/>
+
+                            <!-- Capabilities keys for Vista/7 "Set Program Access and Defaults"
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\MyApp\Capabilities" Name="ApplicationDescription" Value="!(loc.ApplicationDescription)" Type="string" />
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\MyApp\Capabilities" Name="ApplicationIcon" Value="[APPLICATIONFOLDER]MyApp.exe,0" Type="string" />
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\MyApp\Capabilities" Name="ApplicationName" Value="!(loc.ApplicationName)" Type="string" />
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\MyApp\Capabilities\DefaultIcon" Value="[APPLICATIONFOLDER]MyApp.exe,1" Type="string" />
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\MyApp\Capabilities\FileAssociations" Name=".xyz" Value="MyApp.Document" Type="string" />
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\MyApp\Capabilities\MIMEAssociations" Name="application/xyz" Value="MyApp.Document" Type="string" />
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\MyApp\Capabilities\shell\Open\command" Value="&quot;[APPLICATIONFOLDER]MyApp.exe&quot; &quot;%1&quot;" Type="string" />
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\RegisteredApplications" Name="MyApp" Value="SOFTWARE\MyApp\Capabilities" Type="string" />
+                            -->
+
+                            <!-- App Paths to support Start,Run -> "myapp"
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\MyApp.exe" Value="[!MyApp.exe]" Type="string" />
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\MyApp.exe" Name="Path" Value="[APPLICATIONFOLDER]" Type="string" />
+                            -->
+
+                            <!-- Extend to the "open with" list + Win7 jump menu pinning
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\Applications\MyApp.exe\SupportedTypes" Name=".xyz" Value="" Type="string" />
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\Applications\MyApp.exe\shell\open" Name="FriendlyAppName" Value="!(loc.ApplicationName)" Type="string" />
+                            -->
+
+                            <!-- MyApp.Document ProgID
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\MyApp.Document" Name="FriendlyTypeName" Value="!(loc.DescXYZ)" Type="string" />
+                            <ProgId Id="MyApp.Document" Description="!(loc.DescXYZ)" Icon="filetype.ico" Advertise="yes">
+                                <Extension Id="xyz">
+                                    <Verb Id="open" Command="!(loc.ExplorerMenuOpenXYZ)" Argument="&quot;%1&quot;" />
+                                    <MIME Advertise="yes" ContentType="application/xyz" Default="yes" />
+                                </Extension>
+                            </ProgId>
+                            -->
+
+                            <!-- FIXME: Can I make the default association with .csv an optional part of the installer by making it a separate component? -->
+                            <ProgId Id="CsvAider.Document" Description="Comma-separated values" Advertise="yes">
+                                <Extension Id="csv">
+                                    <Verb Id="open" Argument="&quot;%1&quot;" /> <!-- Command="!(loc.ExplorerMenuOpenXYZ)" -->
+                                    <MIME Advertise="yes" ContentType="text/csv" Default="yes" />
+                                </Extension>
+                            </ProgId>
+
+                            <!-- Optional: add an 'Edit with XYZ' to 'right click' even when not associated
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\SystemFileAssociations\.xyz\shell\edit.MyApp.exe" Value="!(loc.ExplorerMenuEditXYZ)" Type="string" />
+                            <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\SystemFileAssociations\.xyz\shell\edit.MyApp.exe\command" Value="&quot;[APPLICATIONFOLDER]MyApp.exe&quot; &quot;%1&quot;" Type="string" />
+                            -->
+
                         </Component>
                     </Directory>
                 </Directory>

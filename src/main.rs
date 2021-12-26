@@ -3,6 +3,9 @@ use std::fs::File;
 use csv::StringRecord;
 use clipboard::{ClipboardProvider, ClipboardContext};
 
+// FIXME: add argument for the file to download
+// FIXME: change to win32 API or something so that console doesn't appear when running through double-click... maybe MessageBoxA it ir something instead
+
 fn main() -> Result<(), Box<dyn Error>> {
     let mut rdr = csv::Reader::from_reader( File::open("test1.csv")?);
     let mut str = String::new();
