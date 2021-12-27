@@ -1,31 +1,27 @@
+#![windows_subsystem = "windows"]
+
 use std::{fs::File, time::Instant};
 use csv::StringRecord;
 use clipboard::{ClipboardProvider, ClipboardContext};
 use msgbox::IconType;
 use std::env;
-use anyhow::Result;
+use anyhow::{Result, Context};
 use thiserror::Error;
-
-// FIXME: change to win32 API or something so that console doesn't appear when running through double-click... maybe MessageBoxA it ir something instead
-// FIXME: add context to all errors in copy_csv_to_clipboard
-// FIXME: micro-optimize speed?
 
 #[derive(Error, Debug)]
 pub enum ApplicationError {
     #[error("Required filename argument not provided")]
     MissingFileArgument,
-    // #[error("Invalid header (expected {expected:?}, got {found:?})")]
-    // InvalidHeader {
-    //     expected: String,
-    //     found: String,
-    // },
-    // #[error("Missing attribute: {0}")]
-    // MissingAttribute(String),
 }
 
 fn main() -> Result<()> {
+    let start = Instant::now();
     match copy_csv_to_clipboard() {
         Ok(_) => {
+            let now = Instant::now();
+            let elapsed = now.duration_since(start);
+            msgbox::create("Success", &format!("Copied file to clipboard; took {}ms", elapsed.as_millis()), IconType::Info)?;
+
             Ok(())
         },
         Err(e) => {
@@ -36,10 +32,8 @@ fn main() -> Result<()> {
 }
 
 fn copy_csv_to_clipboard() -> Result<(), Box<dyn std::error::Error>> {
-    let start = Instant::now();
-
     let args: Vec<String> = env::args().collect();
-    let cmd = args.get(0).expect("arg[0] required");
+    let _cmd = args.get(0).expect("arg[0] required");
     let file = args.get(1);
 
     if file.is_none() {
@@ -48,21 +42,17 @@ fn copy_csv_to_clipboard() -> Result<(), Box<dyn std::error::Error>> {
 
     let file = file.unwrap();
 
-    let mut rdr = csv::Reader::from_reader( File::open(file)?);
+    let mut rdr = csv::Reader::from_reader(File::open(file).context("Failed to open file requested")?);
     let mut str = String::new();
 
     for result in rdr.records() {
         // The iterator yields Result<StringRecord, Error>, so we check the error here.
-        let record = result?;
+        let record = result.context("failed to read line in file")?;
         str.push_str(&convert_to_tsv_line(record));
     }
 
-    let mut ctx: ClipboardContext = ClipboardProvider::new()?; // .expect("initializing ClipboardProvider");
-    ctx.set_contents(str)?; // .expect("set_contents on ClipboardProvider");
-
-    let now = Instant::now();
-    let elapsed = now.duration_since(start);
-    msgbox::create("Success", &format!("Success {} {}; took {}ms", cmd, file, elapsed.as_millis()), IconType::Info)?;
+    let mut ctx: ClipboardContext = ClipboardProvider::new()?;
+    ctx.set_contents(str)?;
 
     Ok(())
 }
