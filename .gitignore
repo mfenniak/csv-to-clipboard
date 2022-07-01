@@ -2,3 +2,4 @@
 arch/pkg
 arch/src
 arch/*.tar.gz
+arch/*.zst

@@ -1,15 +1,15 @@
 # Maintainer: Mathieu Fenniak <mathieu@fenniak.net>
 pkgname=csv-to-clipboard
-pkgver=1.0.1
+pkgver=1.0.2
 pkgrel=1
-pkgdesc="Copy CSV files into the clipboard in a pasteable format"
+pkgdesc="Copy CSV files onto the clipboard in a pasteable format"
 arch=('x86_64')
 url="https://github.com/mfenniak/csv-to-clipboard"
 license=('MIT')
-#depends=('gcc-libs' 'pcre2')
-makedepends=('cargo') # 'asciidoctor' 'jq')
+depends=('gtk3')
+makedepends=('cargo')
 source=("$pkgname-$pkgver.tar.gz::https://github.com/mfenniak/$pkgname/archive/$pkgver.tar.gz")
-sha512sums=('8fb8ad76a962238edcc5a05ad67b4b99652d65ca0dd0ff471ef5680bcbe6f086d44c025fb75584f0442c10ccc2d05a07a5589beb4da922f5016f0af6dbb1dd65')
+sha512sums=('58a7d005a89e4cd3e9bf071c35b400e97ce177c6e9e62e342d0e2c8fe995d582eee404d364734bea4a87a6fc73c5ed5273ed1243789d7bc0ec23052ba415c782')
 
 build() {
   cd "$pkgname-$pkgver"
