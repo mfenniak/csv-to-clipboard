@@ -13,7 +13,7 @@ cargo build
 
 Otherwise, you'd need rust (works w/ 1.61.0) and gtk development libraries.
 
-A `PKGBUILD` for Arch is published in the Arch User Repository.
+A `PKGBUILD` for Arch is published in the [Arch User Repository](https://aur.archlinux.org/packages/csv-to-clipboard).
 
 
 ## General
