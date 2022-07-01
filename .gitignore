@@ -1,1 +1,4 @@
 /target
+arch/pkg
+arch/src
+arch/*.tar.gz
