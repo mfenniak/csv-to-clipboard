@@ -25,7 +25,7 @@ fn main() -> Result<()> {
             Ok(())
         },
         Err(e) => {
-            msgbox::create("Error!", &format!("Error occurred in rust-clipboardy.exe: {}", e), IconType::Error)?;
+            msgbox::create("Error!", &format!("Error occurred in csv-to-clipboard: {}", e), IconType::Error)?;
             Ok(()) // technically should be an error, but I don't think it really matters        
         }
     }
