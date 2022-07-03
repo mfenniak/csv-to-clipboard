@@ -3,10 +3,10 @@
 use std::{fs::File, time::Instant};
 use csv::StringRecord;
 use clipboard::{ClipboardProvider, ClipboardContext};
-use msgbox::IconType;
 use std::env;
 use anyhow::{Result, Context};
 use thiserror::Error;
+use notify_rust::Notification;
 
 #[derive(Error, Debug)]
 pub enum ApplicationError {
@@ -20,12 +20,19 @@ fn main() -> Result<()> {
         Ok(_) => {
             let now = Instant::now();
             let elapsed = now.duration_since(start);
-            msgbox::create("Success", &format!("Copied file to clipboard; took {}ms", elapsed.as_millis()), IconType::Info)?;
-
+            Notification::new()
+                .summary("csv-to-clipboard")
+                .body(&format!("Copied file to clipboard in {}ms", elapsed.as_millis()))
+                .icon("edit-paste")
+                .show()?;
             Ok(())
         },
         Err(e) => {
-            msgbox::create("Error!", &format!("Error occurred in csv-to-clipboard: {}", e), IconType::Error)?;
+            Notification::new()
+                .summary("csv-to-clipboard Error")
+                .body(&format!("Error: {}", e))
+                .icon("data-error")
+                .show()?;
             Ok(()) // technically should be an error, but I don't think it really matters        
         }
     }

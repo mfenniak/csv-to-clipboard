@@ -8,20 +8,7 @@ authors = ["Mathieu Fenniak <mathieu@fenniak.net>"]
 
 [dependencies]
 csv = "1.1"
-# tsv = "0.1.1"
 clipboard = "0.5.0"
-msgbox = "0.6.1"
 anyhow = "1.0.52"
 thiserror = "1.0"
-
-# [dependencies.windows]
-# version = "0.28.0"
-# features = [
-#     "alloc",
-#     "Data_Xml_Dom",
-#     "Win32_Foundation",
-#     "Win32_Security",
-#     "Win32_System_Threading",
-#     "Win32_UI_WindowsAndMessaging",
-# ]
-
+notify-rust = "4"
